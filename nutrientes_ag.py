@@ -11,6 +11,27 @@ TAM = TAXA_ELITISMO * TAM_POPULACAO
 TAM = int(TAM)
 F = 0.8
 
+# Baseado em 100g
+# Nome, Proteinas, Carboidratos, Gordura, Caloria
+CEREAIS_DERIVADOS = [["Arroz integral cozido", 2.6, 25.8, 0.3, 123.5], ["Arroz tipo 1", 2.5, 28.1, 0.2, 128.3],
+["Biscoito Recheado Chocolate", 6, 71, 20, 472], ["Biscoito Salgado Cream Cracker", 10, 69, 14, 432],
+["Cereal Matinal", 7, 84, 1, 382], ["Macarrao Instantaneo", 9, 62, 17, 432], ["Pao Frances", 8, 59, 3, 300]]
+
+VERDURAS_HORTALIÇAS_DERIVADOS = [["Abobrinha Italiana Refogada", 1.1, 4.2, 0.1, 24.4], ["Alface Lisa", 2, 2, 0, 14],
+["Alho cru", 7, 24, 0, 113], ["Batata Doce Cozida", 0.6, 18.4, 0, 76.8], ["Beterraba Crua", 2, 11, 0, 49],
+["Cará", 1.5, 18.9, 0, 77.6], ["Cenoura Cozida", 0.9, 6.7, 0.1, 29.9], ["Couve Crua", 3, 4, 1, 27],
+["Espinafre Nova Zelândia Refogado", 2.7, 4.2, 0.9, 67.3], ["Mandioca Frita", 1.4, 50.3, 1.7, 300.1], 
+["Nabo cru", 1, 4, 0, 18], ["Tomate com semente cru", 1, 3, 0, 15], ["Vagem crua", 2, 5, 0, 25]]
+
+FRUTAS_DERIVADOS = [["Abacate", 1, 6, 8, 96], ["Abacaxi", 1, 12, 0, 48], ["Banana prata", 1, 26, 0, 98],
+["Coco", 4, 10, 0, 402], ["Goiaba vermelha", 1, 13, 0, 54], ["Laranja Pera", 1, 9, 0, 37], ["Maça Fuji", 0, 15, 0, 56],
+["Maracujá", 2, 12, 2, 68], ["Melao", 1, 8, 0, 29], ["Morango", 1, 7, 0, 30]]
+
+PESCADOS = [["Corimbata Assado", 19, 0, 4.8, 261.5], ["Pintado Grelhado", 30.8, 0, 1.1, 152.2],
+["File de Merluza Frito", 26.9, 0, 1.4, 191.6], ["Atum conserva em oleo", 26.2, 0, 1, 165.9]]
+
+CARNES_DERIVADOS = []
+
 #Criar listas para o gráfico de convergência
 geracoes = []
 melhores_fitnesses=[]
