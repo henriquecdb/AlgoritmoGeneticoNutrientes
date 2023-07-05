@@ -30,26 +30,22 @@ FRUTAS_DERIVADOS = [["Abacate", 1, 6, 8, 96], ["Abacaxi", 1, 12, 0, 48], ["Banan
 PESCADOS = [["Corimbata Assado", 19, 0, 4.8, 261.5], ["Pintado Grelhado", 30.8, 0, 1.1, 152.2],
 ["File de Merluza Frito", 26.9, 0, 1.4, 191.6], ["Atum conserva em oleo", 26.2, 0, 1, 165.9]]
 
-CARNES_DERIVADOS = []
+CARNES_DERIVADOS = [["Carne bovina acem moida cozida", 26.7, 0, 10.9, 212.4], ["Carne bovina contra file sem gordura grelhado", 35.9, 0, 4.5, 193.7],
+["Carne bovina costela assada", 28.8, 0, 27.7, 373], ["File mignon sem gordura grelhado", 33, 0, 9, 220],
+["Carne bovina fraldinha com gordura cozida", 24, 0, 26, 338], ["Carne bovina lagarto cozida", 33, 0, 9, 221]]
+
+LEITE_DERIVADOS = [["Leite UHT integral", 6, 8.8, 4, 113], ["Iogurte natural", 4, 2, 3, 51]]
+
+MISCELANEA = [["Cafe", 15, 66, 12, 419]]
+
+LEGUMINOSAS_DERIVADOS = [["Feijao carioca", 20, 63, 1, 336], ["Lentilha", 23, 64, 1, 347]]
+
+BEBIDAS = [["Agua de coco", 0, 5.3, 0, 21.5], ["Refrigerante tipo guarana", 0, 10, 0, 38.7], ["Suco Laranja Pera", 0.7, 7.6, 0.1, 32.7],
+["Suco de uva nectar", 0, 29, 0, 115]]
 
 #Criar listas para o gráfico de convergência
 geracoes = []
 melhores_fitnesses=[]
-
-def steady_state(populacao, nova_populacao):
-    populacao.sort(key=avaliar_individuo)
-    for i in populacao:
-        individuo_aux = random.choice(nova_populacao)
-        if avaliar_individuo(i) < avaliar_individuo(individuo_aux):
-            i = individuo_aux
-        
-def elitismo(populacao):
-    elite = []
-    populacao.sort(reverse=True, key=avaliar_individuo)
-    for i in range(TAM):
-        elite.append(populacao[i])
-        populacao.remove(populacao[i])
-    return elite
 
 def torneio(populacao):
     s = random.sample(populacao, 4)
