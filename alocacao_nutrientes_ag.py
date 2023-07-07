@@ -1,10 +1,31 @@
 import random
 import matplotlib.pyplot as plt
 
-# Definir os parâmetros do problema
-# Baseado em 100g
-# Nome, Proteinas, Carboidratos, Gordura, Caloria
+# INDIVIDUO = [[[3, Quant], [9, Quant], [1, Quant]], [[2, Quant], [3, Quant], [7, Quant], [1, Quant], [2, Quant]], ...]
+# O individuo é composto de 4 partes. O primeiro array representa o café da manhã, o segundo almoço, o terceiro café da tarde e o quarto, a janta
+# O café da manhã e da tarde é composto de alimentos de 3 categorias: cereal, fruta e bebida
+# O almoço e janta é composto de alimentos de 4 categorias: 2 cereais, 2 verduras/hortaliças, carne(almoço) ou peixe(janta) e bebida
+# O array [[3, Quant], [9, Quant], [1, Quant]] por exemplo, pode representar o café da manhã, sendo que os arrays [3, Quant], [9, Quant], [1, Quant] representam a posição do alimento na base de dados, exemplo CAFE_CEREAIS[3] e Quant a porção de 100g do alimento, sendo que Quant * 100 representa a quantidade em gramas
 
+
+
+# Mínimo e máximo de porções de 100g para cada tipo de alimento.
+LIMITE_CEREAIS = [0.5, 1]
+LIMITE_FRUTAS = [2, 5]
+LIMITE_BEBIDAS = [1, 2]
+LIMITE_CARNES = [0.8, 1.5]
+LIMITE_PEIXES = [0.5, 2]
+LIMITE_VERDURAS = [0.05, 0.2]
+
+# Parâmetros do algoritmos genético
+TAM_POPULACAO = 1000
+TAXA_MUTACAO = 0.1
+NUM_GERACOES = 150
+TAXA_CRUZAMENTO = 0.8
+
+
+# Quantidades baseadas em 100g do alimento
+# Ordem dos dados: Nome, Proteinas, Carboidratos, Gordura, Caloria
 
 CAFE_CEREAIS = [["Biscoito Recheado Chocolate", 6, 71, 20, 472], ["Biscoito Salgado Cream Cracker", 10, 69, 14, 432],
 ["Cereal Matinal", 7, 84, 1, 382], ["Pao Frances", 8, 59, 3, 300]]
@@ -34,76 +55,79 @@ REFEICAO_CARNES = [["Carne bovina acem moida cozida", 26.7, 0, 10.9, 212.4], ["C
 
 REFEICAO_BEBIDAS = [["Refrigerante Guarana", 0, 10, 0, 38.7], ["Suco Laranja Pera", 0.7, 7.6, 0.1, 32.7], ["Suco de uva nectar", 0, 29, 0, 115]]
 
-
-
-LIMITES = [0.1, 2]
-
-TAM_POPULACAO = 200
-TAXA_MUTACAO = 0.1
-NUM_GERACOES = 100
-TAXA_CRUZAMENTO = 0.8
-
-#Criar listas para o gráfico de convergência
+# Criar listas para o gráfico de convergência
 geracoes = []
 melhores_fitnesses=[]
 
-# Definir as funções de avaliação e cruzamento
-def avaliar_individuo(individuo):
-    # Avaliar a qualidade do indivíduo
+
+# Função que retorna a quantidade de proteina, carboidrato, gordura e caloria totais de determinado individuo
+
+def calcular_proteina_carboidrato_gordura_caloria(individuo):
     proteina = 0
     carboidrato = 0
     gordura = 0
     calorias = 0
     
     for i in range(len(individuo)):
-        #INDIVIDUO = [[[3, Quant], [9, Quant], [1, Quant]], [5, 9, 2, 1, 4], [3, 9, 1], [5, 9, 2, 1, 4]]
-        # Nome, Proteinas, Carboidratos, Gordura, Caloria
-        if i % 2 == 0:
-            cafe = individuo[i]
-
-            proteina += (cafe[0][1] * CAFE_CEREAIS[cafe[0][0]][1] + cafe[1][1] * CAFE_FRUTAS[cafe[1][0]][1] + 
-                        cafe[2][1] * CAFE_BEBIDAS[cafe[2][0]][1])
-            carboidrato += (cafe[0][1] * CAFE_CEREAIS[cafe[0][0]][2] + cafe[1][1] * CAFE_FRUTAS[cafe[1][0]][2] + 
-                        cafe[2][1] * CAFE_BEBIDAS[cafe[2][0]][2])
-            gordura += (cafe[0][1] * CAFE_CEREAIS[cafe[0][0]][3] + cafe[1][1] * CAFE_FRUTAS[cafe[1][0]][3] + 
-                        cafe[2][1] * CAFE_BEBIDAS[cafe[2][0]][3])
-            calorias += (cafe[0][1] * CAFE_CEREAIS[cafe[0][0]][4] + cafe[1][1] * CAFE_FRUTAS[cafe[1][0]][4] + 
-                        cafe[2][1] * CAFE_BEBIDAS[cafe[2][0]][4])
+        if i % 2 == 0: # Verdadeiro quando a refeição é café da manhã ou da tarde
+            
+            # Recebe a lista com o id e quantidade dos alimentos
+            alimentos = individuo[i]
+            
+            # Percorre a lista com os alimentos, multiplicando a quantidade do alimento pela coluna do nutriente na base de dados e somando ao total de cada nutriente
+            proteina += (alimentos[0][1] * CAFE_CEREAIS[alimentos[0][0]][1] + alimentos[1][1] * CAFE_FRUTAS[alimentos[1][0]][1] + 
+                        alimentos[2][1] * CAFE_BEBIDAS[alimentos[2][0]][1])
+            carboidrato += (alimentos[0][1] * CAFE_CEREAIS[alimentos[0][0]][2] + alimentos[1][1] * CAFE_FRUTAS[alimentos[1][0]][2] + 
+                        alimentos[2][1] * CAFE_BEBIDAS[alimentos[2][0]][2])
+            gordura += (alimentos[0][1] * CAFE_CEREAIS[alimentos[0][0]][3] + alimentos[1][1] * CAFE_FRUTAS[alimentos[1][0]][3] + 
+                        alimentos[2][1] * CAFE_BEBIDAS[alimentos[2][0]][3])
+            calorias += (alimentos[0][1] * CAFE_CEREAIS[alimentos[0][0]][4] + alimentos[1][1] * CAFE_FRUTAS[alimentos[1][0]][4] + 
+                        alimentos[2][1] * CAFE_BEBIDAS[alimentos[2][0]][4])
 
         else:
-            if i == 1:
+            if i == 1: # Verdadeiro quando a refeição é o almoço
                 carne = REFEICAO_CARNES
-            elif i == 3:
+            elif i == 3: # Verdadeiro quando a refeição é a janta
                 carne = REFEICAO_PESCADOS
 
-            cafe = individuo[i]
+            alimentos = individuo[i]
 
-            proteina += (cafe[0][1] * REFEICAO_CEREAIS[cafe[0][0]][1] + cafe[1][1] * REFEICAO_VERDURAS_HORTALICAS[cafe[1][0]][1] + 
-                        cafe[2][1] * carne[cafe[2][0]][1] + cafe[3][1] * REFEICAO_BEBIDAS[cafe[3][0]][1])
-            carboidrato += (cafe[0][1] * REFEICAO_CEREAIS[cafe[0][0]][2] + cafe[1][1] * REFEICAO_VERDURAS_HORTALICAS[cafe[1][0]][2] + 
-                        cafe[2][1] * carne[cafe[2][0]][2] + cafe[3][1] * REFEICAO_BEBIDAS[cafe[3][0]][2])
-            gordura += (cafe[0][1] * REFEICAO_CEREAIS[cafe[0][0]][3] + cafe[1][1] * REFEICAO_VERDURAS_HORTALICAS[cafe[1][0]][3] + 
-                        cafe[2][1] * carne[cafe[2][0]][3] + cafe[3][1] * REFEICAO_BEBIDAS[cafe[3][0]][3])
-            calorias += (cafe[0][1] * REFEICAO_CEREAIS[cafe[0][0]][4] + cafe[1][1] * REFEICAO_VERDURAS_HORTALICAS[cafe[1][0]][4] + 
-                        cafe[2][1] * carne[cafe[2][0]][4] + cafe[3][1] * REFEICAO_BEBIDAS[cafe[3][0]][4])
+            proteina += (alimentos[0][1] * REFEICAO_CEREAIS[alimentos[0][0]][1] + alimentos[1][1] * REFEICAO_CEREAIS[alimentos[1][0]][1] + alimentos[2][1] * REFEICAO_VERDURAS_HORTALICAS[alimentos[2][0]][1] + 
+                        alimentos[3][1] * REFEICAO_VERDURAS_HORTALICAS[alimentos[3][0]][1] + alimentos[4][1] * carne[alimentos[4][0]][1] + alimentos[5][1] * REFEICAO_BEBIDAS[alimentos[5][0]][1])
+            carboidrato += (alimentos[0][1] * REFEICAO_CEREAIS[alimentos[0][0]][2] + alimentos[1][1] * REFEICAO_CEREAIS[alimentos[1][0]][2] + alimentos[2][1] * REFEICAO_VERDURAS_HORTALICAS[alimentos[2][0]][2] + 
+                        alimentos[3][1] * REFEICAO_VERDURAS_HORTALICAS[alimentos[3][0]][2] + alimentos[4][1] * carne[alimentos[4][0]][2] + alimentos[5][1] * REFEICAO_BEBIDAS[alimentos[5][0]][2])
+            gordura += (alimentos[0][1] * REFEICAO_CEREAIS[alimentos[0][0]][3] + alimentos[1][1] * REFEICAO_CEREAIS[alimentos[1][0]][3] + alimentos[2][1] * REFEICAO_VERDURAS_HORTALICAS[alimentos[2][0]][3] + 
+                        alimentos[3][1] * REFEICAO_VERDURAS_HORTALICAS[alimentos[3][0]][3] + alimentos[4][1] * carne[alimentos[4][0]][3] + alimentos[5][1] * REFEICAO_BEBIDAS[alimentos[5][0]][3])
+            calorias += (alimentos[0][1] * REFEICAO_CEREAIS[alimentos[0][0]][4] + alimentos[1][1] * REFEICAO_CEREAIS[alimentos[1][0]][4] + alimentos[2][1] * REFEICAO_VERDURAS_HORTALICAS[alimentos[2][0]][4] + 
+                        alimentos[3][1] * REFEICAO_VERDURAS_HORTALICAS[alimentos[3][0]][4] + alimentos[4][1] * carne[alimentos[4][0]][4] + alimentos[5][1] * REFEICAO_BEBIDAS[alimentos[5][0]][4])
+
+    return proteina, carboidrato, gordura, calorias
 
 
 
 
+# Avalia o individuo com base nas restrições e valores desejados de nutrientes e calorias
+def avaliar_individuo(individuo):
+    proteina, carboidrato, gordura, caloria = calcular_proteina_carboidrato_gordura_caloria(individuo)
     nutrientes = proteina + carboidrato + gordura
+    
 
+    # Calcula a porcentagem de proteina, carboidrato e gordura do individuo
     relacao_proteina = abs(((proteina/nutrientes) * 100) - 20)
     relacao_carboidrato = abs(((carboidrato/nutrientes) * 100) - 55)
     relacao_gordura = abs(((gordura/nutrientes) * 100) - 35)
 
-    return relacao_proteina + relacao_carboidrato + relacao_gordura
+    fitness = relacao_proteina + relacao_carboidrato + relacao_gordura
+    
+    # Se caloria ultrapassar 2500kcal penaliza o individuo
+    if caloria > 2500:
+        fitness *= 10
+
+    return fitness
 
 def cruzar_individuos(individuo1, individuo2):
-    # Realizar o cruzamento dos indivíduos
-    filho = []
-    for i in range(len(individuo1)):
-        filho.append((individuo1[i] + individuo2[i]) / 2)
-
+    # O filho recebe o café da manhã e da tarde do individuo1 e almoço e janta do individuo2
+    filho = [individuo1[0], individuo2[1], individuo1[2], individuo2[3]]
     return filho
 
 def torneio(g1, g2):
@@ -111,30 +135,95 @@ def torneio(g1, g2):
     g2.sort(key=avaliar_individuo)
     return cruzar_individuos(g1[0], g2[0])
 
+def gerar_individuo():
+
+    # Cria os arrays contendo o id do alimento e quantidade de forma aleatória, respeitando os limites impostos
+    CMC = [random.randint(0, len(CAFE_CEREAIS) - 1), random.uniform(LIMITE_CEREAIS[0], LIMITE_CEREAIS[1])]
+    CMF = [random.randint(0, len(CAFE_FRUTAS) - 1), random.uniform(LIMITE_FRUTAS[0], LIMITE_FRUTAS[1])]
+    CMB = [random.randint(0, len(CAFE_BEBIDAS) - 1), random.uniform(LIMITE_BEBIDAS[0], LIMITE_BEBIDAS[1])]
+    ACE = [random.randint(0, len(REFEICAO_CEREAIS) - 1), random.uniform(LIMITE_CEREAIS[0], LIMITE_CEREAIS[1])]
+    ACE2 = [random.randint(0, len(REFEICAO_CEREAIS) - 1), random.uniform(LIMITE_CEREAIS[0], LIMITE_CEREAIS[1])]
+    AVH = [random.randint(0, len(REFEICAO_VERDURAS_HORTALICAS) - 1), random.uniform(LIMITE_VERDURAS[0], LIMITE_VERDURAS[1])]
+    AVH2 = [random.randint(0, len(REFEICAO_VERDURAS_HORTALICAS) - 1), random.uniform(LIMITE_VERDURAS[0], LIMITE_VERDURAS[1])]
+    ACA = [random.randint(0, len(REFEICAO_CARNES) - 1), random.uniform(LIMITE_CARNES[0], LIMITE_CARNES[1])]
+    ABE = [random.randint(0, len(REFEICAO_BEBIDAS) - 1), random.uniform(LIMITE_BEBIDAS[0], LIMITE_BEBIDAS[1])]
+    CTC = [random.randint(0, len(CAFE_CEREAIS) - 1), random.uniform(LIMITE_CEREAIS[0], LIMITE_CEREAIS[1])]
+    CTF = [random.randint(0, len(CAFE_FRUTAS) - 1), random.uniform(LIMITE_FRUTAS[0], LIMITE_FRUTAS[1])]
+    CTB = [random.randint(0, len(CAFE_BEBIDAS) - 1), random.uniform(LIMITE_BEBIDAS[0], LIMITE_BEBIDAS[1])]
+    JCE = [random.randint(0, len(REFEICAO_CEREAIS) - 1), random.uniform(LIMITE_CEREAIS[0], LIMITE_CEREAIS[1])]
+    JCE2 = [random.randint(0, len(REFEICAO_CEREAIS) - 1), random.uniform(LIMITE_CEREAIS[0], LIMITE_CEREAIS[1])]
+    JVH = [random.randint(0, len(REFEICAO_VERDURAS_HORTALICAS) - 1), random.uniform(LIMITE_VERDURAS[0], LIMITE_VERDURAS[1])]
+    JVH2 = [random.randint(0, len(REFEICAO_VERDURAS_HORTALICAS) - 1), random.uniform(LIMITE_VERDURAS[0], LIMITE_VERDURAS[1])]
+    JPE = [random.randint(0, len(REFEICAO_PESCADOS) - 1), random.uniform(LIMITE_PEIXES[0], LIMITE_PEIXES[1])]
+    JBE = [random.randint(0, len(REFEICAO_BEBIDAS) - 1), random.uniform(LIMITE_BEBIDAS[0], LIMITE_BEBIDAS[1])]
+
+    individuo = [[CMC, CMF, CMB], [ACE, ACE2, AVH, AVH2, ACA, ABE], [CTC, CTF, CTB], [JCE, JCE2, JVH, JVH2, JPE, JBE]]
+    return individuo
+
+
+def imprimir_dieta(individuo):
+    cafe_manha = individuo[0]
+    almoco = individuo[1]
+    cafe_tarde = individuo[2]
+    janta = individuo[3]
+    
+
+    # Armazena o nome do alimento e a sua quantidade em gramas
+    cereal = CAFE_CEREAIS[cafe_manha[0][0]][0]
+    porcao_cereal = cafe_manha[0][1] * 100
+    fruta = CAFE_FRUTAS[cafe_manha[1][0]][0]
+    porcao_fruta = cafe_manha[1][1] * 100
+    bebida = CAFE_BEBIDAS[cafe_manha[2][0]][0]
+    porcao_bebida = cafe_manha[2][1] * 100
+
+    print(cereal, " -> ", porcao_cereal, "g\n", fruta, " -> ", porcao_fruta,"g\n", bebida, " -> ", porcao_bebida, "g")
+
+    cereal = [REFEICAO_CEREAIS[almoco[0][0]][0], REFEICAO_CEREAIS[almoco[1][0]][0]]
+    porcao_cereal = [almoco[0][1] * 100, almoco[1][1] * 100]
+    verdura = [REFEICAO_VERDURAS_HORTALICAS[almoco[2][0]][0], REFEICAO_VERDURAS_HORTALICAS[almoco[3][0]][0]]
+    porcao_verdura = [almoco[2][1] * 100, almoco[3][1] * 100]
+    carne = REFEICAO_CARNES[almoco[4][0]][0]
+    porcao_carne = almoco[4][1] * 100
+    bebida = REFEICAO_BEBIDAS[almoco[5][0]][0]
+    porcao_bebida = almoco[5][1] * 100
+
+    print(cereal, " -> ", porcao_cereal, "g\n", verdura, " -> ", porcao_verdura,"g\n", carne, " -> ", porcao_carne, "g\n", bebida, " -> ", porcao_bebida, "g")
+
+    cereal = CAFE_CEREAIS[cafe_tarde[0][0]][0]
+    porcao_cereal = cafe_tarde[0][1] * 100
+    fruta = CAFE_FRUTAS[cafe_tarde[1][0]][0]
+    porcao_fruta = cafe_tarde[1][1] * 100
+    bebida = CAFE_BEBIDAS[cafe_tarde[2][0]][0]
+    porcao_bebida = cafe_tarde[2][1] * 100
+
+    print(cereal, " -> ", porcao_cereal, "g\n", fruta, " -> ", porcao_fruta,"g\n", bebida, " -> ", porcao_bebida, "g")
+
+    cereal = [REFEICAO_CEREAIS[janta[0][0]][0], REFEICAO_CEREAIS[janta[1][0]][0]]
+    porcao_cereal = [janta[0][1] * 100, janta[1][1] * 100]
+    verdura = [REFEICAO_VERDURAS_HORTALICAS[janta[2][0]][0], REFEICAO_VERDURAS_HORTALICAS[janta[3][0]][0]]
+    porcao_verdura = [janta[2][1] * 100, janta[3][1] * 100]
+    carne = REFEICAO_PESCADOS[janta[4][0]][0]
+    porcao_carne = janta[4][1] * 100
+    bebida = REFEICAO_BEBIDAS[janta[5][0]][0]
+    porcao_bebida = janta[5][1] * 100
+
+    print(cereal, " -> ", porcao_cereal, "g\n", verdura, " -> ", porcao_verdura,"g\n", carne, " -> ", porcao_carne, "g\n", bebida, " -> ", porcao_bebida, "g")
+
+    proteina, carboidrato, gordura, caloria = calcular_proteina_carboidrato_gordura_caloria(individuo)
+    
+    print("Proteina total: ", proteina, "g\nCarboidrato total: ", carboidrato, "g\nGordura total: ", gordura, "g\nCaloria total: ", caloria, "kcal")
+    print(avaliar_individuo(individuo))
+
 # Gerar a população inicial
 populacao = []
 for i in range(TAM_POPULACAO):
-    CMC = [random.randint(0, len(CAFE_CEREAIS)), random.uniform(LIMITES[0], LIMITES[1])]
-    CMF = [random.randint(0, len(CAFE_FRUTAS)), random.uniform(LIMITES[0], LIMITES[1])]
-    CMB = [random.randint(0, len(CAFE_BEBIDAS)), random.uniform(LIMITES[0], LIMITES[1])]
-    ACE = [random.randint(0, len(REFEICAO_CEREAIS)), random.uniform(LIMITES[0], LIMITES[1])]
-    AVH = [random.randint(0, len(REFEICAO_VERDURAS_HORTALICAS)), random.uniform(LIMITES[0], LIMITES[1])]
-    ACA = [random.randint(0, len(REFEICAO_CARNES)), random.uniform(LIMITES[0], LIMITES[1])]
-    ABE = [random.randint(0, len(REFEICAO_BEBIDAS)), random.uniform(LIMITES[0], LIMITES[1])]
-    CTC = [random.randint(0, len(CAFE_CEREAIS)), random.uniform(LIMITES[0], LIMITES[1])]
-    CTF = [random.randint(0, len(CAFE_FRUTAS)), random.uniform(LIMITES[0], LIMITES[1])]
-    CTB = [random.randint(0, len(CAFE_BEBIDAS)), random.uniform(LIMITES[0], LIMITES[1])]
-    JCE = [random.randint(0, len(REFEICAO_CEREAIS)), random.uniform(LIMITES[0], LIMITES[1])]
-    JVH = [random.randint(0, len(REFEICAO_VERDURAS_HORTALICAS)), random.uniform(LIMITES[0], LIMITES[1])]
-    JPE = [random.randint(0, len(REFEICAO_PESCADOS)), random.uniform(LIMITES[0], LIMITES[1])]
-    JBE = [random.randint(0, len(REFEICAO_BEBIDAS)), random.uniform(LIMITES[0], LIMITES[1])]
-
-    individuo = [[CMC, CMF, CMB], [ACE, AVH, ACA, ABE], [CTC, CTF, CTB], [JCE, JVH, JPE, JBE]]
+    individuo = gerar_individuo()
     populacao.append(individuo)
     
 # CAFE, REFEICAO, LANCHE, REFEICAO
 #INDIVIDUO = [[[3, Quant], [9, Quant], [1, Quant]], [5, 9, 2, 1, 4], [3, 9, 1], [5, 9, 2, 1, 4]]
 
+melhores_individuos = []
 # Executar o algoritmo genético
 for geracao in range(NUM_GERACOES):
 
@@ -157,10 +246,8 @@ for geracao in range(NUM_GERACOES):
 
     # Realizar a mutação na nova população
     for i in range(len(nova_populacao)):
-        individuo = nova_populacao[i]
-        for j in range(len(individuo)):
-            if random.random() < TAXA_MUTACAO:
-                individuo[j] = (individuo[j] + random.uniform(LIMITES[0], LIMITES[1])) / 2
+        if random.random() < TAXA_MUTACAO:
+            nova_populacao[i] = gerar_individuo()
                 
 
     # Substituir a população anterior pela nova população
@@ -168,11 +255,20 @@ for geracao in range(NUM_GERACOES):
 
     # Imprimir a melhor solução encontrada até o momento
     melhor_individuo = min(populacao, key=avaliar_individuo)
+    melhores_individuos.append(melhor_individuo)
     melhor_fitness = avaliar_individuo(melhor_individuo)
     geracoes = list(range(NUM_GERACOES))
     #geracoes.append(geracao)
     melhores_fitnesses.append(melhor_fitness)
-    print(f"Melhor solução na geração {geracao}: {melhor_individuo} (fitness = {melhor_fitness})")
+    #print(f"Melhor solução na geração {geracao}: {melhor_individuo} (fitness = {melhor_fitness})")
+
+
+
+melhor_individuo = min(melhores_individuos, key=avaliar_individuo)
+print("MELHOR INDIVIDUO -> ", melhor_individuo)
+imprimir_dieta(melhor_individuo)
+
+
 
 
 # Plotar o gráfico de convergência
