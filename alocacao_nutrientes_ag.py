@@ -110,18 +110,41 @@ def calcular_proteina_carboidrato_gordura_caloria(individuo):
 def avaliar_individuo(individuo):
     proteina, carboidrato, gordura, caloria = calcular_proteina_carboidrato_gordura_caloria(individuo)
     nutrientes = proteina + carboidrato + gordura
-    
 
-    # Calcula a porcentagem de proteina, carboidrato e gordura do individuo
-    relacao_proteina = abs(((proteina/nutrientes) * 100) - 20)
-    relacao_carboidrato = abs(((carboidrato/nutrientes) * 100) - 55)
-    relacao_gordura = abs(((gordura/nutrientes) * 100) - 35)
+    # Ajuste dos valores desejados dos nutrientes
+    meta_proteina = 0.25  # 25% de proteína
+    meta_carboidrato = 0.50  # 50% de carboidrato
+    meta_gordura = 0.25  # 25% de gordura
 
-    fitness = relacao_proteina + relacao_carboidrato + relacao_gordura
-    
-    # Se caloria ultrapassar 2500kcal penaliza o individuo
+    # Cálculo dos desvios ponderados dos nutrientes
+    peso_proteina = 2.0  # Peso maior para proteína
+    peso_carboidrato = 1.0
+    peso_gordura = 1.5  # Peso maior para gordura
+
+    relacao_proteina = abs(((proteina / nutrientes) * 100) - (meta_proteina * 100))
+    relacao_carboidrato = abs(((carboidrato / nutrientes) * 100) - (meta_carboidrato * 100))
+    relacao_gordura = abs(((gordura / nutrientes) * 100) - (meta_gordura * 100))
+
+    # Penalização para valores nutricionais acima das metas
+    penalidade_excesso = 0.1  # Fator de penalidade para cada unidade acima da meta
+    excesso_proteina = max(0, proteina - (meta_proteina * nutrientes))
+    excesso_carboidrato = max(0, carboidrato - (meta_carboidrato * nutrientes))
+    excesso_gordura = max(0, gordura - (meta_gordura * nutrientes))
+
+    fitness = (peso_proteina * relacao_proteina) + (peso_carboidrato * relacao_carboidrato) + (peso_gordura * relacao_gordura)
+    fitness += (penalidade_excesso * (excesso_proteina + excesso_carboidrato + excesso_gordura))
+
+    # Se caloria ultrapassar 2500kcal penaliza o indivíduo
     if caloria > 2500:
         fitness *= 10
+
+    # Penalização por falta de calorias desejadas
+    meta_calorias = 2000  # Valor desejado de calorias
+    penalidade_calorias = 0.1  # Fator de penalidade para cada caloria abaixo da meta
+    falta_calorias = meta_calorias - caloria
+
+    if falta_calorias > 0:
+        fitness += penalidade_calorias * falta_calorias
 
     return fitness
 
@@ -177,7 +200,7 @@ def imprimir_dieta(individuo):
     porcao_bebida = cafe_manha[2][1] * 100
 
     print(cereal, " -> ", porcao_cereal, "g\n", fruta, " -> ", porcao_fruta,"g\n", bebida, " -> ", porcao_bebida, "g")
-
+    print()
     cereal = [REFEICAO_CEREAIS[almoco[0][0]][0], REFEICAO_CEREAIS[almoco[1][0]][0]]
     porcao_cereal = [almoco[0][1] * 100, almoco[1][1] * 100]
     verdura = [REFEICAO_VERDURAS_HORTALICAS[almoco[2][0]][0], REFEICAO_VERDURAS_HORTALICAS[almoco[3][0]][0]]
@@ -188,7 +211,7 @@ def imprimir_dieta(individuo):
     porcao_bebida = almoco[5][1] * 100
 
     print(cereal, " -> ", porcao_cereal, "g\n", verdura, " -> ", porcao_verdura,"g\n", carne, " -> ", porcao_carne, "g\n", bebida, " -> ", porcao_bebida, "g")
-
+    print()
     cereal = CAFE_CEREAIS[cafe_tarde[0][0]][0]
     porcao_cereal = cafe_tarde[0][1] * 100
     fruta = CAFE_FRUTAS[cafe_tarde[1][0]][0]
@@ -197,7 +220,7 @@ def imprimir_dieta(individuo):
     porcao_bebida = cafe_tarde[2][1] * 100
 
     print(cereal, " -> ", porcao_cereal, "g\n", fruta, " -> ", porcao_fruta,"g\n", bebida, " -> ", porcao_bebida, "g")
-
+    print()
     cereal = [REFEICAO_CEREAIS[janta[0][0]][0], REFEICAO_CEREAIS[janta[1][0]][0]]
     porcao_cereal = [janta[0][1] * 100, janta[1][1] * 100]
     verdura = [REFEICAO_VERDURAS_HORTALICAS[janta[2][0]][0], REFEICAO_VERDURAS_HORTALICAS[janta[3][0]][0]]
@@ -208,11 +231,11 @@ def imprimir_dieta(individuo):
     porcao_bebida = janta[5][1] * 100
 
     print(cereal, " -> ", porcao_cereal, "g\n", verdura, " -> ", porcao_verdura,"g\n", carne, " -> ", porcao_carne, "g\n", bebida, " -> ", porcao_bebida, "g")
-
+    print()
     proteina, carboidrato, gordura, caloria = calcular_proteina_carboidrato_gordura_caloria(individuo)
     
     print("Proteina total: ", proteina, "g\nCarboidrato total: ", carboidrato, "g\nGordura total: ", gordura, "g\nCaloria total: ", caloria, "kcal")
-    print(avaliar_individuo(individuo))
+    print(f"Fitness = {avaliar_individuo(individuo)}")
 
 # Gerar a população inicial
 populacao = []
@@ -266,8 +289,8 @@ for geracao in range(NUM_GERACOES):
 
 melhor_individuo = min(melhores_individuos, key=avaliar_individuo)
 print("MELHOR INDIVIDUO -> ", melhor_individuo)
+print()
 imprimir_dieta(melhor_individuo)
-
 
 
 
