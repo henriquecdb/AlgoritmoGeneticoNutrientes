@@ -1,13 +1,27 @@
 # Relatório de Elaboração de Cardápios Nutricionais
 
+## Introdução
+Os cardápios nutricionais desempenham um papel essencial na promoção de uma alimentação saudável e equilibrada. Eles são elaborados levando em consideração as necessidades individuais de cada pessoa, fornecendo uma variedade de alimentos que atendam aos requisitos nutricionais diários. No entanto, a criação manual de cardápios pode ser uma tarefa complexa, uma vez que requer conhecimento nutricional, consideração de restrições alimentares e a habilidade de equilibrar a ingestão de calorias.
+
+<p>Nesse contexto, algoritmos genéticos têm sido amplamente utilizados como uma abordagem eficaz para otimizar problemas de planejamento e seleção, incluindo a elaboração de cardápios nutricionais. Os algoritmos genéticos são técnicas inspiradas na evolução biológica que utilizam uma combinação de processos de seleção, cruzamento e mutação para encontrar soluções de alta qualidade em problemas complexos.</p>
+
 ## Objetivo
-O objetivo deste algoritmo genético é elaborar cardápios nutricionais que minimizem a quantidade de calorias consumidas. O algoritmo irá selecionar alimentos de diferentes categorias e combiná-los de maneira a fornecer uma refeição equilibrada e com baixo teor calórico.
+O objetivo deste algoritmo é elaborar cardápios nutricionais que sejam nutricionalmente equilibrados e minimizem a quantidade de calorias consumidas. O algoritmo irá selecionar alimentos de diferentes categorias e combiná-los de maneira a fornecer uma refeição equilibrada e com baixo teor calórico.
+
+## Modelagem
+Cada indivíduo na população do algoritmo genético é representado como um cardápio, composto por uma sequência de alimentos para cada refeição do dia (café da manhã, almoço, café da tarde e jantar). A escolha dos alimentos será baseada em alimentos pré-selecionados e categorizados de acordo com a refeição do dia. As características dos alimentos são: nome, proteínas, carboidratos, gorduras e calorias.
+
+## Referência Nutricional
+De acordo com essas recomendações, o consumo de nutrientes deve se basear nas seguintes proporções:
+- <b>Carboidratos</b>: É recomendado que o consumo de carboidratos seja equivalente a aproximadamente 55% das calorias totais consumidas. Os carboidratos são uma importante fonte de energia e podem ser obtidos a partir de alimentos como grãos, cereais, frutas, legumes e vegetais.
+- <b>Proteínas</b>: A recomendação média é que as proteínas consumo de proteínas seja equivalente a cerca de  20% das calorias totais consumidas. As proteínas são essenciais para a construção e reparo de tecidos, além de desempenharem funções importantes no corpo. Boas fontes de proteína incluem carnes magras, peixes, ovos, laticínios, legumes, nozes e sementes.
+- <b>Gorduras</b>: A recomendação é que as gorduras consumo de gorduras seja equivalente a cerca de 35% das calorias totais consumidas.
 
 ## Alimentos Disponíveis
 
 ### Café - Cereais
 
-| Alimento                            | Porção (g) | Carboidratos (g) | Proteínas (g) | Calorias |
+| Alimento                            | Proteínas | Carboidratos | Gorduras | Calorias |
 |-------------------------------------|------------|-----------------|---------------|----------|
 | Biscoito Recheado Chocolate         | 6          | 71              | 20            | 472      |
 | Biscoito Salgado Cream Cracker      | 10         | 69              | 14            | 432      |
@@ -16,7 +30,7 @@ O objetivo deste algoritmo genético é elaborar cardápios nutricionais que min
 
 ### Café - Frutas
 
-| Alimento              | Porção (g) | Carboidratos (g) | Proteínas (g) | Calorias |
+| Alimento              | Proteínas | Carboidratos | Gorduras | Calorias |
 |-----------------------|------------|-----------------|---------------|----------|
 | Abacate               | 1          | 6               | 8             | 96       |
 | Abacaxi               | 1          | 12              | 0             | 48       |
@@ -31,7 +45,7 @@ O objetivo deste algoritmo genético é elaborar cardápios nutricionais que min
 
 ### Café - Bebidas
 
-| Alimento              | Porção (ml) | Carboidratos (g) | Proteínas (g) | Calorias |
+| Alimento              | Proteínas | Carboidratos | Gorduras | Calorias |
 |-----------------------|-------------|-----------------|---------------|----------|
 | Café                  | 15          | 66              | 12            | 419      |
 | Água de Coco          | 0           | 5.3             | 0             | 21.5     |
@@ -42,7 +56,7 @@ O objetivo deste algoritmo genético é elaborar cardápios nutricionais que min
 
 ### Refeição - Cereais
 
-| Alimento                     | Porção (g) | Carboidratos (g) | Proteínas (g) | Calorias |
+| Alimento                     | Proteínas | Carboidratos | Gorduras | Calorias |
 |------------------------------|------------|-----------------|---------------|----------|
 | Arroz Integral Cozido        | 2.6        | 25.8            | 0.3           | 123.5    |
 | Arroz Tipo 1                 | 2.5        | 28.1            | 0.2           | 128.3    |
@@ -52,7 +66,7 @@ O objetivo deste algoritmo genético é elaborar cardápios nutricionais que min
 
 ### Refeição - Verduras e Hortaliças
 
-| Alimento                           | Porção (g) | Carboidratos (g) | Proteínas (g) | Calorias |
+| Alimento                           | Proteínas | Carboidratos | Gorduras | Calorias |
 |------------------------------------|------------|-----------------|---------------|----------|
 | Abobrinha Italiana Refogada        | 1.1        | 4.2             | 0.1           | 24.4     |
 | Alface Lisa                        | 2          | 2               | 0             | 14       |
@@ -70,7 +84,7 @@ O objetivo deste algoritmo genético é elaborar cardápios nutricionais que min
 
 ### Refeição - Pescados
 
-| Alimento              | Porção (g) | Carboidratos (g) | Proteínas (g) | Calorias |
+| Alimento              | Proteínas | Carboidratos | Gorduras | Calorias |
 |-----------------------|------------|-----------------|---------------|----------|
 | Corimbata Assado      | 19         | 0               | 4.8           | 261.5    |
 | Pintado Grelhado      | 30.8       | 0               | 1.1           | 152.2    |
@@ -79,7 +93,7 @@ O objetivo deste algoritmo genético é elaborar cardápios nutricionais que min
 
 ### Refeição - Carnes
 
-| Alimento                                  | Porção (g) | Carboidratos (g) | Proteínas (g) | Calorias |
+| Alimento                                  | Proteínas | Carboidratos | Gorduras | Calorias |
 |-------------------------------------------|------------|-----------------|---------------|------|
 | Carne Bovina Acém Moída Cozida             | 26.7       | 0               | 10.9          | 212.4    |
 | Carne Bovina Contra Filé sem Gordura Grelhado  | 35.9   | 0               | 4.5           | 193.7    |
@@ -90,7 +104,7 @@ O objetivo deste algoritmo genético é elaborar cardápios nutricionais que min
 
 ### Refeição - Bebidas
 
-| Alimento               | Porção (ml) | Carboidratos (g) | Proteínas (g) | Calorias |
+| Alimento               | Proteínas | Carboidratos | Gorduras | Calorias |
 |------------------------|-------------|-----------------|---------------|----------|
 | Refrigerante Guaraná   | 0           | 10              | 0             | 38.7     |
 | Suco Laranja Pêra      | 0.7         | 7.6             | 0.1           | 32.7     |
