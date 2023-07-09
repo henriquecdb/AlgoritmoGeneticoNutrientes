@@ -111,7 +111,7 @@ De acordo com essas recomendações, o consumo de nutrientes deve se basear nas 
 | Suco de Uva Néctar     | 0           | 29              | 0             | 115      |
 
 ## Resultados Encontrados
-Após a execução do algoritmo, foram obtidos cardápios nutricionais, utilizando uma abordagem baseada na seleção e combinação de alimentos de diferentes categorias. Os resultados demonstram o potencial do algoritmo genético como uma ferramenta eficaz na elaboração de cardápios personalizados, contribuindo para uma alimentação saudável e equilibrada. Segue o exemplo de uma das execuções:
+Após a execução do algoritmo, foram obtidos cardápios nutricionais, utilizando uma abordagem baseada na seleção e combinação de alimentos de diferentes categorias. Os resultados demonstram o potencial do algoritmo genético como uma ferramenta eficaz na elaboração de cardápios personalizados, contribuindo para uma alimentação saudável e equilibrada. O resultado final é baseado no melhor indivíduo e, em seguida, o nome dos alimentos e sua quantidade. A ordem das refeições é: café da manhã, almoço, café da tarde e jantar. Segue o exemplo de uma das execuções:
 ![Resultado](https://i.imgur.com/QTlNY4v.png)
 
 ## Conclusão
