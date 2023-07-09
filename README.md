@@ -110,6 +110,10 @@ De acordo com essas recomendações, o consumo de nutrientes deve se basear nas 
 | Suco Laranja Pêra      | 0.7         | 7.6             | 0.1           | 32.7     |
 | Suco de Uva Néctar     | 0           | 29              | 0             | 115      |
 
+## Resultados Encontrados
+Após a execução do algoritmo, foram obtidos cardápios nutricionais, utilizando uma abordagem baseada na seleção e combinação de alimentos de diferentes categorias. Os resultados demonstram o potencial do algoritmo genético como uma ferramenta eficaz na elaboração de cardápios personalizados, contribuindo para uma alimentação saudável e equilibrada. Segue o exemplo de uma das execuções:
+![Resultado](https://i.imgur.com/QTlNY4v.png)
+
 ## Conclusão
 
 O algoritmo genético permite a seleção de alimentos de diferentes categorias para elaborar cardápios nutricionais com o objetivo de minimizar a ingestão de calorias. As tabelas acima apresentam os alimentos disponíveis em cada categoria, juntamente com suas informações nutricionais.
