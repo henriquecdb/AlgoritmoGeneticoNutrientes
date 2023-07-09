@@ -316,8 +316,8 @@ def imprimir_dieta(individuo):
     
     proteina, carboidrato, gordura, caloria = calcular_proteina_carboidrato_gordura_caloria(individuo)
     
-    print("Proteina total: ", proteina, "g\nCarboidrato total: ", carboidrato, "g\nGordura total: ", gordura, "g\nCaloria total: ", caloria, "kcal")
-    print(f"Fitness = {avaliar_individuo(individuo)}")
+    #print("Proteina total: ", proteina, "g\nCarboidrato total: ", carboidrato, "g\nGordura total: ", gordura, "g\nCaloria total: ", caloria, "kcal")
+    #print(f"Fitness = {avaliar_individuo(individuo)}")
 
 # Gerar a população inicial
 populacao = []
