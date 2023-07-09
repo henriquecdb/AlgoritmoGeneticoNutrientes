@@ -10,17 +10,17 @@ import matplotlib.pyplot as plt
 
 
 # Mínimo e máximo de porções de 100g para cada tipo de alimento.
-LIMITE_CEREAIS = [0.5, 1]
-LIMITE_FRUTAS = [2, 5]
+LIMITE_CEREAIS = [0.5, 1.5]
+LIMITE_FRUTAS = [1, 1.5]
 LIMITE_BEBIDAS = [1, 2]
-LIMITE_CARNES = [0.8, 1.5]
+LIMITE_CARNES = [0.8, 2]
 LIMITE_PEIXES = [0.5, 2]
 LIMITE_VERDURAS = [0.05, 0.2]
 
 # Parâmetros do algoritmos genético
-TAM_POPULACAO = 1000
+TAM_POPULACAO = 200
 TAXA_MUTACAO = 0.1
-NUM_GERACOES = 150
+NUM_GERACOES = 200
 TAXA_CRUZAMENTO = 0.8
 
 
@@ -116,6 +116,7 @@ def avaliar_individuo(individuo):
     meta_carboidrato = 0.50  # 50% de carboidrato
     meta_gordura = 0.25  # 25% de gordura
 
+
     # Cálculo dos desvios ponderados dos nutrientes
     peso_proteina = 2.0  # Peso maior para proteína
     peso_carboidrato = 1.0
@@ -124,6 +125,7 @@ def avaliar_individuo(individuo):
     relacao_proteina = abs(((proteina / nutrientes) * 100) - (meta_proteina * 100))
     relacao_carboidrato = abs(((carboidrato / nutrientes) * 100) - (meta_carboidrato * 100))
     relacao_gordura = abs(((gordura / nutrientes) * 100) - (meta_gordura * 100))
+
 
     # Penalização para valores nutricionais acima das metas
     penalidade_excesso = 0.1  # Fator de penalidade para cada unidade acima da meta
@@ -134,17 +136,97 @@ def avaliar_individuo(individuo):
     fitness = (peso_proteina * relacao_proteina) + (peso_carboidrato * relacao_carboidrato) + (peso_gordura * relacao_gordura)
     fitness += (penalidade_excesso * (excesso_proteina + excesso_carboidrato + excesso_gordura))
 
+
     # Se caloria ultrapassar 2500kcal penaliza o indivíduo
     if caloria > 2500:
         fitness *= 10
 
+
     # Penalização por falta de calorias desejadas
-    meta_calorias = 2000  # Valor desejado de calorias
+    meta_calorias = 2500  # Valor desejado de calorias
     penalidade_calorias = 0.1  # Fator de penalidade para cada caloria abaixo da meta
     falta_calorias = meta_calorias - caloria
 
     if falta_calorias > 0:
         fitness += penalidade_calorias * falta_calorias
+
+    
+    # Penalização por repetição de alimentos da mesma categoria
+    almoco = individuo[1]
+    cereal = [REFEICAO_CEREAIS[almoco[0][0]][0], REFEICAO_CEREAIS[almoco[1][0]][0]]
+
+    if cereal[0] == cereal[1]:
+        fitness *= 20
+
+    verdura = [REFEICAO_VERDURAS_HORTALICAS[almoco[2][0]][0], REFEICAO_VERDURAS_HORTALICAS[almoco[3][0]][0]]
+
+    if verdura[0] == verdura[1]:
+        fitness *= 3
+
+
+    janta = individuo[3]
+    cereal = [REFEICAO_CEREAIS[janta[0][0]][0], REFEICAO_CEREAIS[janta[1][0]][0]]
+
+    if cereal[0] == cereal[1]:
+        fitness *= 20
+
+    verdura = [REFEICAO_VERDURAS_HORTALICAS[janta[2][0]][0], REFEICAO_VERDURAS_HORTALICAS[janta[3][0]][0]]
+
+    if verdura[0] == verdura[1]:
+        fitness *= 3
+
+
+    # Penalização por tipos diferentes do mesmo alimento
+    almoco = individuo[1]
+    cereal = [REFEICAO_CEREAIS[almoco[0][0]][0], REFEICAO_CEREAIS[almoco[1][0]][0]]
+
+    if "Arroz" in cereal[0] and "Arroz" in cereal[1]:
+        fitness *= 50
+
+    janta = individuo[3]
+    cereal = [REFEICAO_CEREAIS[janta[0][0]][0], REFEICAO_CEREAIS[janta[1][0]][0]]
+
+    if "Arroz" in cereal[0] and "Arroz" in cereal[1]:
+        fitness *= 50
+
+
+    # Penalização por alimento gorduroso no café
+    cafe = individuo[0]
+    fitness *= 20 * cafe[0][1] * CAFE_CEREAIS[cafe[0][0]][3]
+
+    cafe = individuo[2]
+    fitness *= 20 * cafe[0][1] * CAFE_CEREAIS[cafe[0][0]][3]
+
+
+    # Recompensa por café como bebida
+    alimento = individuo[0]
+    cafe = CAFE_BEBIDAS[alimento[2][0]][0]
+
+    if "Cafe" in cafe:
+        fitness *= 0.6
+
+    alimento = individuo[2]
+    cafe = CAFE_BEBIDAS[alimento[2][0]][0]
+
+    if "Cafe" in cafe:
+        fitness *= 0.8
+
+
+    # Penalização por água de coco vir acompanhada de uma fruta que não seja coco
+    alimento = individuo[0]
+    agua_coco = CAFE_BEBIDAS[alimento[2][0]][0]
+    fruta = CAFE_FRUTAS[alimento[1][0]][0]
+
+    if "coco" in agua_coco and "Coco" not in fruta:
+        fitness *= 1.6
+
+    alimento = individuo[2]
+    agua_coco = CAFE_BEBIDAS[alimento[2][0]][0]
+    fruta = CAFE_FRUTAS[alimento[1][0]][0]
+
+    if "coco" in agua_coco and "Coco" not in fruta:
+        fitness *= 1.8
+
 
     return fitness
 
@@ -199,8 +281,8 @@ def imprimir_dieta(individuo):
     bebida = CAFE_BEBIDAS[cafe_manha[2][0]][0]
     porcao_bebida = cafe_manha[2][1] * 100
 
-    print(cereal, " -> ", porcao_cereal, "g\n", fruta, " -> ", porcao_fruta,"g\n", bebida, " -> ", porcao_bebida, "g")
-    print()
+    print(cereal, " -> ", porcao_cereal, "g\n", fruta, " -> ", porcao_fruta,"g\n", bebida, " -> ", porcao_bebida, "ml\n")
+    
     cereal = [REFEICAO_CEREAIS[almoco[0][0]][0], REFEICAO_CEREAIS[almoco[1][0]][0]]
     porcao_cereal = [almoco[0][1] * 100, almoco[1][1] * 100]
     verdura = [REFEICAO_VERDURAS_HORTALICAS[almoco[2][0]][0], REFEICAO_VERDURAS_HORTALICAS[almoco[3][0]][0]]
@@ -210,8 +292,8 @@ def imprimir_dieta(individuo):
     bebida = REFEICAO_BEBIDAS[almoco[5][0]][0]
     porcao_bebida = almoco[5][1] * 100
 
-    print(cereal, " -> ", porcao_cereal, "g\n", verdura, " -> ", porcao_verdura,"g\n", carne, " -> ", porcao_carne, "g\n", bebida, " -> ", porcao_bebida, "g")
-    print()
+    print(cereal, " -> ", porcao_cereal, "g\n", verdura, " -> ", porcao_verdura,"g\n", carne, " -> ", porcao_carne, "g\n", bebida, " -> ", porcao_bebida, "ml\n")
+    
     cereal = CAFE_CEREAIS[cafe_tarde[0][0]][0]
     porcao_cereal = cafe_tarde[0][1] * 100
     fruta = CAFE_FRUTAS[cafe_tarde[1][0]][0]
@@ -219,8 +301,8 @@ def imprimir_dieta(individuo):
     bebida = CAFE_BEBIDAS[cafe_tarde[2][0]][0]
     porcao_bebida = cafe_tarde[2][1] * 100
 
-    print(cereal, " -> ", porcao_cereal, "g\n", fruta, " -> ", porcao_fruta,"g\n", bebida, " -> ", porcao_bebida, "g")
-    print()
+    print(cereal, " -> ", porcao_cereal, "g\n", fruta, " -> ", porcao_fruta,"g\n", bebida, " -> ", porcao_bebida, "ml\n")
+    
     cereal = [REFEICAO_CEREAIS[janta[0][0]][0], REFEICAO_CEREAIS[janta[1][0]][0]]
     porcao_cereal = [janta[0][1] * 100, janta[1][1] * 100]
     verdura = [REFEICAO_VERDURAS_HORTALICAS[janta[2][0]][0], REFEICAO_VERDURAS_HORTALICAS[janta[3][0]][0]]
@@ -230,8 +312,8 @@ def imprimir_dieta(individuo):
     bebida = REFEICAO_BEBIDAS[janta[5][0]][0]
     porcao_bebida = janta[5][1] * 100
 
-    print(cereal, " -> ", porcao_cereal, "g\n", verdura, " -> ", porcao_verdura,"g\n", carne, " -> ", porcao_carne, "g\n", bebida, " -> ", porcao_bebida, "g")
-    print()
+    print(cereal, " -> ", porcao_cereal, "g\n", verdura, " -> ", porcao_verdura,"g\n", carne, " -> ", porcao_carne, "g\n", bebida, " -> ", porcao_bebida, "ml\n")
+    
     proteina, carboidrato, gordura, caloria = calcular_proteina_carboidrato_gordura_caloria(individuo)
     
     print("Proteina total: ", proteina, "g\nCarboidrato total: ", carboidrato, "g\nGordura total: ", gordura, "g\nCaloria total: ", caloria, "kcal")
@@ -249,13 +331,11 @@ for i in range(TAM_POPULACAO):
 melhores_individuos = []
 # Executar o algoritmo genético
 for geracao in range(NUM_GERACOES):
-
-#Variável geracao já inicializada no loop 
-#O Python permite que as variáveis sejam definidas em diferentes partes do código, como em loops, funções ou condicionais. 
     # Avaliar a qualidade da população
     fitnesses = [avaliar_individuo(individuo) for individuo in populacao]
     nova_populacao = []
 
+    # Realizar o cruzamento por torneio
     for i in range(TAM_POPULACAO):
 
         gladiadores1 = []
@@ -276,14 +356,11 @@ for geracao in range(NUM_GERACOES):
     # Substituir a população anterior pela nova população
     populacao = nova_populacao
 
-    # Imprimir a melhor solução encontrada até o momento
     melhor_individuo = min(populacao, key=avaliar_individuo)
     melhores_individuos.append(melhor_individuo)
     melhor_fitness = avaliar_individuo(melhor_individuo)
     geracoes = list(range(NUM_GERACOES))
-    #geracoes.append(geracao)
     melhores_fitnesses.append(melhor_fitness)
-    #print(f"Melhor solução na geração {geracao}: {melhor_individuo} (fitness = {melhor_fitness})")
 
 
 
